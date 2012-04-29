@@ -25,8 +25,21 @@ import com.onemightyroar.campfire.api.stream.MessageStreamHandler;
 public class CampfireApi {
 
 	private final String host;
-	private final HttpConnection httpConnection;
+	private HttpConnection httpConnection;
 	private final ResourceFactory resourceFactory;
+	
+	/**
+	  * Constructor.
+	  * @param accountName (required) your Campfire account name.
+	  */
+	public CampfireApi(String accountName) {
+		this.host = accountName + ".campfirenow.com";
+		if(accountName.equals("")) {
+			throw new RuntimeException();
+		}
+		this.httpConnection = new HttpConnection("X", "X");
+		this.resourceFactory = new ResourceFactory(this);
+	}
 	
 	/**
 	  * Constructor.
@@ -43,11 +56,15 @@ public class CampfireApi {
 	}
 	
 	/**
-	  * Constructor.
+	  * Constructor for use with getMe(). This method is deprecated.<br><br>
+	  * Instead you should use the {@link com.onemightyroar.campfire.api.CampfireApi#CampfireApi(String) Basic Constructor}
+	  * and {@link com.onemightyroar.campfire.api.CampfireApi#getMe(String, String) getMe}. You can use the response
+	  * with {@link com.onemightyroar.campfire.api.CampfireApi#setAuthToken(String) setAuthToken} to make additional calls.
 	  * @param accountName (required) your Campfire account name.
 	  * @param username (required)
 	  * @param password (required) 
 	  */
+	@Deprecated
 	public CampfireApi(String accountName, String username, String password) {
 		this.host = accountName + ".campfirenow.com";
 		if(accountName.equals("")) {
@@ -59,6 +76,14 @@ public class CampfireApi {
 	
 	public HttpConnection getConnection() {
 		return this.httpConnection;
+	}
+	
+	/**
+	 * Sets the auth token to be used to authenticate http requests
+	 * @param authToken
+	 */
+	public void setAuthToken(String authToken) {
+		this.httpConnection = new HttpConnection(authToken, "X");
 	}
 	
 	/**
@@ -388,10 +413,23 @@ public class CampfireApi {
 
 	
 	/**
-	 * Gets the current user
+	 * Gets the current user. If the AuthToken hasn't been set yet, you should use 
+	 * {@link com.onemightyroar.campfire.api.CampfireApi#getMe(String, String) getMe(String, String)}
 	 * @return success
 	 */
 	public User getMe() {
+		URLBuilder url = new URLBuilder(host, "/users/me.json");
+		String httpResult = httpConnection.doGet(url.toURL());
+		return resourceFactory.buildUser(httpResult);
+	}
+	
+	/**
+	 * Gets the current user with the provided username and password.
+	 * @return success
+	 */
+	public User getMe(String username, String password) {
+		this.httpConnection = new HttpConnection(username, password);
+		
 		URLBuilder url = new URLBuilder(host, "/users/me.json");
 		String httpResult = httpConnection.doGet(url.toURL());
 		return resourceFactory.buildUser(httpResult);
