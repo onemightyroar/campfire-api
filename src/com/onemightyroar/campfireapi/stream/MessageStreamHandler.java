@@ -28,5 +28,11 @@ public interface MessageStreamHandler {
      * User has left the room
      */
     public void leave(User user, Room room);
+
+    /**
+     * Connection Lost
+     */
+    public void disconnect(Room room);
+    
     
 }
