@@ -1,8 +1,10 @@
 package com.onemightyroar.campfireapi.factory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,10 +39,12 @@ public class ResourceFactory {
 			account.setOwnerId(accountJSON.getLong("owner_id"));
 			account.setTimezone(accountJSON.getString("time_zone"));
 			account.setStorage(accountJSON.getInt("storage"));
-			account.setUpdatedAt(new Date(accountJSON.getString("updated_at")));
-			account.setCreatedAt(new Date(accountJSON.getString("created_at")));
+			account.setUpdatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(accountJSON.getString("updated_at")));
+			account.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(accountJSON.getString("created_at")));
 			account.setJSON(accountJSON);
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return account;
@@ -94,11 +98,13 @@ public class ResourceFactory {
 					room.addActiveUser(buildUser(usersJSON.getJSONObject(i)));
 				}
 			}
-			
-			room.setUpdatedAt(new Date(roomJSON.getString("updated_at")));
-			room.setCreatedAt(new Date(roomJSON.getString("created_at")));
+
+			room.setUpdatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(roomJSON.getString("updated_at")));
+			room.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(roomJSON.getString("created_at")));
 			
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return room;
@@ -154,15 +160,27 @@ public class ResourceFactory {
 			message.setBody(messageJSON.getString("body"));
 			message.setStarred(messageJSON.getBoolean("starred"));
 			message.setType(messageJSON.getString("type"));
-			message.setCreatedAt(new Date(messageJSON.getString("created_at")));
+			message.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(messageJSON.getString("created_at")));
 			message.setJSON(messageJSON);
 		
 			if(message.getType() == MessageType.UPLOAD) {
 				message.setUpload(mApi.getMessageUpload(message.getRoomId(), message.getId()));
+				Upload upload = message.getUpload();
+				message.setBody(upload == null ? "deleted" : upload.getFullUrl());
 			}
 			
 			if(message.getType() == MessageType.TWEET) {
-				message.setTweet(buildTweet(messageJSON.getJSONObject("tweet")));
+				Object tweetObject = messageJSON.get("tweet");
+
+				// Campfire bug: Sometimes tweets are NULL
+				if(tweetObject == JSONObject.NULL)
+				{
+					message.setType("TextMessage");
+				} 
+				// Everything went fine.
+				else {
+					message.setTweet(buildTweet(messageJSON.getJSONObject("tweet")));
+				}
 			}
 			
 			if(room != null && message.getUserId() != 0) {
@@ -179,6 +197,8 @@ public class ResourceFactory {
 			}
 			
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return message;
@@ -223,9 +243,11 @@ public class ResourceFactory {
 			upload.setByteSize(uploadJSON.getInt("byte_size"));
 			upload.setContentType(uploadJSON.getString("content_type"));
 			upload.setFullUrl(uploadJSON.getString("full_url"));
-			upload.setCreatedAt(new Date(uploadJSON.getString("created_at")));
+			upload.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(uploadJSON.getString("created_at")));
 			upload.setJSON(uploadJSON);
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return upload;
@@ -254,9 +276,11 @@ public class ResourceFactory {
 			user.setType(userJSON.getString("type"));
 			user.setAvatarUrl(userJSON.getString("avatar_url"));
 			user.setApiAuthToken(userJSON.has("api_auth_token") ? userJSON.getString("api_auth_token") : "");
-			user.setCreatedAt(new Date(userJSON.getString("created_at")));
+			user.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(userJSON.getString("created_at")));
 			user.setJSON(userJSON);
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return user;

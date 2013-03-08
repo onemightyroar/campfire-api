@@ -34,7 +34,7 @@ public class MessageStream implements Runnable {
     private static final int DEFAULT_TIMEOUT = 1000, STEP_TIMEOUT = 1000, MAX_TIMEOUT = 16000;
     private int timeout = DEFAULT_TIMEOUT;
     
-    private int pingInterval = 60*8*1000;
+    private int pingInterval = 60*4*1000;
 
     /**
      * Start a stream with a given connection
@@ -90,8 +90,6 @@ public class MessageStream implements Runnable {
         while (true) {
             try {
                 //continuously read message and other things, passing them to the handler as appropriate
-                //@TODO, make this non-blocking
-            	
                 HttpResponse response = client.execute(requestMethod);
                 HttpEntity entity = response.getEntity();
                 if (entity == null) throw new IOException("No entity");
@@ -100,15 +98,17 @@ public class MessageStream implements Runnable {
                 //successful, reset timeout
                 this.timeout = DEFAULT_TIMEOUT;
             } catch (IOException ex) {
-            	ex.printStackTrace();
                 //wait a certain amount of time
                 sleepMilli(this.timeout);
                 //up the timeout to the next appropriate value
                 timeout += STEP_TIMEOUT;
                 if (timeout > MAX_TIMEOUT) timeout = MAX_TIMEOUT;
+                
+                this.handler.disconnect(room);
             }
             if (this.stopRequested) break;
         }
+        
         handler.stop(); // Signal to the handler
         this.requestMethod.abort();
         this.client.getConnectionManager().shutdown();
@@ -151,11 +151,10 @@ public class MessageStream implements Runnable {
         
         while((line = br.readLine()) != null) {
             try {
-                if (line.length() == 0) continue; //skip empty lines
-
+                if (line.length() == 0) continue; 
                 parseIncoming(line);
             } catch (JSONException ex) {
-            	//todo
+            	ex.printStackTrace();
             }
             if (this.stopRequested) break;
         }
@@ -188,7 +187,7 @@ public class MessageStream implements Runnable {
 	        	if(elem.getString("type").equals("UnlockMessage")) parseMessage(elem);
 	        	if(elem.getString("type").equals("UploadMessage")) parseMessage(elem);
 	        }else{
-	        	//Got a bad line!
+	        	// Got a bad line, API might be out of date.
 	        }
 
 		} catch (JSONException e) {

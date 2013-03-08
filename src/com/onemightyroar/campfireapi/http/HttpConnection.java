@@ -19,6 +19,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.params.HttpParams;
 
 import android.net.http.AndroidHttpClient;
+import android.util.Log;
 
 import com.onemightyroar.campfireapi.ApiException;
 import com.onemightyroar.campfireapi.utils.Base64Coder;
@@ -61,14 +62,13 @@ public class HttpConnection  {
 //			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 			AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
 			String result = "";
-			
+			Log.i("Lantern",url.toString());
 			try {
 				
 				if(method.equalsIgnoreCase("POST")) {
 					HttpPost httpPost = new HttpPost(url.toString());
 					
-					StringEntity s = new StringEntity(messageBody.toString());
-					s.setContentEncoding("UTF-8");
+					StringEntity s = new StringEntity(messageBody.toString(), "UTF-8");
 					s.setContentType("application/json");
 					httpPost.setEntity(s);
 				    httpPost.setHeader("Authorization", "Basic " + credentials);
@@ -109,7 +109,7 @@ public class HttpConnection  {
 				    httpClient.close();
 				    
 				    if (!successful(responseCode)) {
-				    	throw new ApiException(responseCode, "Campfire API error");
+				    	throw new ApiException(responseCode, "Campfire API error at: " + url.toString());
 				    }
 				    
 				    return result;

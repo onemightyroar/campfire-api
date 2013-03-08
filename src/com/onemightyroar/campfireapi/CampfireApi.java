@@ -1,3 +1,13 @@
+/**
+ * Campfire Api - A Java library for Campfire from 37Signals
+ *
+ * @author		brianmuse
+ * @copyright	2013 One Mighty Roar
+ * @link		https://github.com/onemightyroar/campfire-api
+ * @license		https://github.com/onemightyroar/campfire-api/blob/master/LICENSE.md
+ * @version		1.0.0
+ */
+	
 package com.onemightyroar.campfireapi;
 
 import java.io.IOException;
@@ -22,24 +32,18 @@ import com.onemightyroar.campfireapi.models.User;
 import com.onemightyroar.campfireapi.stream.MessageStream;
 import com.onemightyroar.campfireapi.stream.MessageStreamHandler;
 
+/**
+ * CampfireApi
+ * 
+ * Java wrapper for the 37Signal Campfire APIs
+ * 
+ * @author brianmuse
+ */
 public class CampfireApi {
 
 	private final String host;
-	private HttpConnection httpConnection;
+	private final HttpConnection httpConnection;
 	private final ResourceFactory resourceFactory;
-	
-	/**
-	  * Constructor.
-	  * @param accountName (required) your Campfire account name.
-	  */
-	public CampfireApi(String accountName) {
-		this.host = accountName + ".campfirenow.com";
-		if(accountName.equals("")) {
-			throw new RuntimeException();
-		}
-		this.httpConnection = new HttpConnection("X", "X");
-		this.resourceFactory = new ResourceFactory(this);
-	}
 	
 	/**
 	  * Constructor.
@@ -56,15 +60,11 @@ public class CampfireApi {
 	}
 	
 	/**
-	  * Constructor for use with getMe(). This method is deprecated.<br><br>
-	  * Instead you should use the {@link com.onemightyroar.campfireapi.CampfireApi#CampfireApi(String) Basic Constructor}
-	  * and {@link com.onemightyroar.campfireapi.CampfireApi#getMe(String, String) getMe}. You can use the response
-	  * with {@link com.onemightyroar.campfireapi.CampfireApi#setAuthToken(String) setAuthToken} to make additional calls.
+	  * Constructor.
 	  * @param accountName (required) your Campfire account name.
 	  * @param username (required)
 	  * @param password (required) 
 	  */
-	@Deprecated
 	public CampfireApi(String accountName, String username, String password) {
 		this.host = accountName + ".campfirenow.com";
 		if(accountName.equals("")) {
@@ -79,14 +79,6 @@ public class CampfireApi {
 	}
 	
 	/**
-	 * Sets the auth token to be used to authenticate http requests
-	 * @param authToken
-	 */
-	public void setAuthToken(String authToken) {
-		this.httpConnection = new HttpConnection(authToken, "X");
-	}
-	
-	/**
 	 * Get the user's account
 	 * 
 	 * @return the room
@@ -94,7 +86,7 @@ public class CampfireApi {
     public Account getAccount() {
 		URLBuilder url = new URLBuilder(host, "/account.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildAccount(httpResult);
+		return httpResult == null ? null : resourceFactory.buildAccount(httpResult);
     }
 	
 	/**
@@ -147,7 +139,7 @@ public class CampfireApi {
 	public Room getRoom(Long roomId) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + ".json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildRoom(httpResult);
+		return httpResult == null ? null : resourceFactory.buildRoom(httpResult);
 	}
 	
 	/**
@@ -157,7 +149,7 @@ public class CampfireApi {
 	public List<Room> getRooms() {
 		URLBuilder url = new URLBuilder(host, "/rooms.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildRooms(httpResult);
+		return httpResult == null ? null : resourceFactory.buildRooms(httpResult);
 	}
 	
 	/**
@@ -167,7 +159,7 @@ public class CampfireApi {
 	public List<Room> getPresence() {
 		URLBuilder url = new URLBuilder(host, "/presence.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildRooms(httpResult);
+		return httpResult == null ? null : resourceFactory.buildRooms(httpResult);
 	}
 	
 	/**
@@ -178,7 +170,7 @@ public class CampfireApi {
 	public Upload postUpload(Long roomId, InputStream fileInputStream, String fileName, String mimeType) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/uploads.json");
 		String httpResult = httpConnection.doPostUpload(url.toURL(), fileInputStream, fileName, mimeType);
-		return resourceFactory.buildUpload(httpResult);
+		return httpResult == null ? null : resourceFactory.buildUpload(httpResult);
 	}
 	
 	/**
@@ -189,7 +181,7 @@ public class CampfireApi {
 	public List<Upload> getUploads(Long roomId) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/uploads.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildUploads(httpResult);
+		return httpResult == null ? null : resourceFactory.buildUploads(httpResult);
 	}
 	
 	/**
@@ -229,9 +221,7 @@ public class CampfireApi {
 	 * @return a list of rooms
 	 */
 	public List<Message> getRecentMessages(Long roomId) {
-		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/recent.json");
-		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult);
+		return getRecentMessages(roomId, null);
 	}
 	
 	/**
@@ -244,9 +234,45 @@ public class CampfireApi {
 	 * @return a list of rooms
 	 */
 	public List<Message> getRecentMessages(Room room) {
-		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(room.getId()) + "/recent.json");
+		return getRecentMessages(room, null);
+	}
+	
+	/**
+	 * Get the recent messages from a room that occured after a specific message ID
+	 * 
+	 * This method takes a room object. If a message object contains a user ID that is not within the room's
+	 * active or inactive user list, it will get that user and add them to the room.
+	 * 
+	 * @param roomId
+	 * @param messageId
+	 * @return a list of rooms
+	 */
+	public List<Message> getRecentMessages(Long roomId, Long messageId) {
+		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/recent.json");
+		if(messageId != null) {
+			url.addFieldValuePair("since_message_id", Long.toString(messageId));
+		}
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult, room);
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult);
+	}
+	
+	/**
+	 * Get the recent messages from a room
+	 * 
+	 * This method takes a room object. If a message object contains a user ID that is not within the room's
+	 * active or inactive user list, it will get that user and add them to the room.
+	 * 
+	 * @param room
+	 * @param messageId
+	 * @return a list of rooms
+	 */
+	public List<Message> getRecentMessages(Room room, Long messageId) {
+		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(room.getId()) + "/recent.json");
+		if(messageId != null) {
+			url.addFieldValuePair("since_message_id", Long.toString(messageId));
+		}
+		String httpResult = httpConnection.doGet(url.toURL());
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult, room);
 	}
 	
 	/**
@@ -257,8 +283,16 @@ public class CampfireApi {
 	 */
 	public Upload getMessageUpload(Long roomId, Long messageId) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/messages/" + messageId + "/upload.json");
-		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildUpload(httpResult);
+		try {
+			String httpResult = httpConnection.doGet(url.toURL());
+			return httpResult == null ? null : resourceFactory.buildUpload(httpResult);
+		}catch(ApiException e) {
+			if(e.getResponseCode() == 404) {
+				return null;
+			} else {
+				throw e;
+			}
+		}	
 	}
 	
 	/**
@@ -309,7 +343,7 @@ public class CampfireApi {
 	public List<Message> searchMessages(String term) {
 		URLBuilder url = new URLBuilder(host, "/search/" + term + ".json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult);
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult);
 	}
 	
 	/**
@@ -368,7 +402,7 @@ public class CampfireApi {
 	public List<Message> getTodaysTranscript(Long roomId) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/transcript.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult);
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult);
 	}
 	
 	/**
@@ -382,7 +416,7 @@ public class CampfireApi {
 	public List<Message> getTranscript(Long roomId, int year, int month, int day) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(roomId) + "/transcript/"+Integer.toString(year) +"/"+Integer.toString(month)+"/"+Integer.toString(day)+".json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult, null);
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult, null);
 	}
 	
 	/**
@@ -396,7 +430,7 @@ public class CampfireApi {
 	public List<Message> getTranscript(Room room, int year, int month, int day) {
 		URLBuilder url = new URLBuilder(host, "/room/" + Long.toString(room.getId()) + "/transcript/"+Integer.toString(year) +"/"+Integer.toString(month)+"/"+Integer.toString(day)+".json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildMessages(httpResult, room);
+		return httpResult == null ? null : resourceFactory.buildMessages(httpResult, room);
 	}
 
 	
@@ -408,31 +442,18 @@ public class CampfireApi {
 	public User getUser(Long userId) {
 		URLBuilder url = new URLBuilder(host, "/users/" + Long.toString(userId) +".json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildUser(httpResult);
+		return httpResult == null ? null : resourceFactory.buildUser(httpResult);
 	}
 
 	
 	/**
-	 * Gets the current user. If the AuthToken hasn't been set yet, you should use 
-	 * {@link com.onemightyroar.campfireapi.CampfireApi#getMe(String, String) getMe(String, String)}
+	 * Gets the current user
 	 * @return success
 	 */
 	public User getMe() {
 		URLBuilder url = new URLBuilder(host, "/users/me.json");
 		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildUser(httpResult);
-	}
-	
-	/**
-	 * Gets the current user with the provided username and password.
-	 * @return success
-	 */
-	public User getMe(String username, String password) {
-		this.httpConnection = new HttpConnection(username, password);
-		
-		URLBuilder url = new URLBuilder(host, "/users/me.json");
-		String httpResult = httpConnection.doGet(url.toURL());
-		return resourceFactory.buildUser(httpResult);
+		return httpResult == null ? null : resourceFactory.buildUser(httpResult);
 	}
 
 
