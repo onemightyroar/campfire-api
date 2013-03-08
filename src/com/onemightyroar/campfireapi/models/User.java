@@ -1,6 +1,5 @@
 package com.onemightyroar.campfireapi.models;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -8,9 +7,7 @@ import org.json.JSONObject;
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
-public class User implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class User {
 
 	private Long id;
 	private String name;

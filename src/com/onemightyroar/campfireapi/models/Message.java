@@ -1,6 +1,5 @@
 package com.onemightyroar.campfireapi.models;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,9 +9,7 @@ import org.json.JSONObject;
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
-public class Message implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Message {
 	
 	private Long id;
 	private Long roomId;
@@ -127,6 +124,7 @@ public class Message implements Serializable {
 			.append("id",getId())
 			.append("roomId",getRoomId())
 			.append("userId",getUserId())
+			.append("user",getUser())
 			.append("body",getBody())
 			.append("starred",isStarred())
 			.append("type",getType().toString())

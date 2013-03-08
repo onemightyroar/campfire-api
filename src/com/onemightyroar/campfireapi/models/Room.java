@@ -1,6 +1,5 @@
 package com.onemightyroar.campfireapi.models;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +10,7 @@ import org.json.JSONObject;
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
-public class Room implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Room {
 	
 	private Long id;
 	private String name;

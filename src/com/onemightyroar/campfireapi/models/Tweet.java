@@ -1,15 +1,11 @@
 package com.onemightyroar.campfireapi.models;
 
-import java.io.Serializable;
-
 import org.json.JSONObject;
 
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
-public class Tweet implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Tweet {
 	
 	private Long id;
 	private String body;

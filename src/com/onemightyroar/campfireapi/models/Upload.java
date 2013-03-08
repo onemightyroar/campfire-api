@@ -1,6 +1,5 @@
 package com.onemightyroar.campfireapi.models;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,9 +9,7 @@ import org.json.JSONObject;
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
-public class Upload implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Upload {
 	
 	private Long id;
 	private Long roomId;
