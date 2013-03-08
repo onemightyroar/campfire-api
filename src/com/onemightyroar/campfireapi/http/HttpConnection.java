@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.http;
+package com.onemightyroar.campfireapi.http;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -20,9 +20,9 @@ import org.apache.http.params.HttpParams;
 
 import android.net.http.AndroidHttpClient;
 
-import com.onemightyroar.campfire.api.ApiException;
-import com.onemightyroar.campfire.api.utils.Base64Coder;
-import com.onemightyroar.campfire.api.xml.DOMUtils;
+import com.onemightyroar.campfireapi.ApiException;
+import com.onemightyroar.campfireapi.utils.Base64Coder;
+import com.onemightyroar.campfireapi.xml.DOMUtils;
 
 public class HttpConnection  {
 	

@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.http;
+package com.onemightyroar.campfireapi.http;
 
 import java.net.MalformedURLException;
 import java.net.URI;

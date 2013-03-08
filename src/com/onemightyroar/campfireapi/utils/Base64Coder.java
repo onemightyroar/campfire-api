@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.utils;
+package com.onemightyroar.campfireapi.utils;
 
 // Copyright 2003-2010 Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland
 // www.source-code.biz, www.inventec.ch/chdh

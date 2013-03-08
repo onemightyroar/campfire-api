@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api;
+package com.onemightyroar.campfireapi;
 
 public class ApiException extends RuntimeException {
 	

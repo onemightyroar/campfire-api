@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.xml;
+package com.onemightyroar.campfireapi.xml;
 
 import java.io.BufferedReader;
 import java.io.IOException;

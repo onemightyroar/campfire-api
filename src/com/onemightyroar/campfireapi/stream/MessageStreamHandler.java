@@ -1,8 +1,8 @@
-package com.onemightyroar.campfire.api.stream;
+package com.onemightyroar.campfireapi.stream;
 
-import com.onemightyroar.campfire.api.models.Message;
-import com.onemightyroar.campfire.api.models.Room;
-import com.onemightyroar.campfire.api.models.User;
+import com.onemightyroar.campfireapi.models.Message;
+import com.onemightyroar.campfireapi.models.Room;
+import com.onemightyroar.campfireapi.models.User;
 
 
 public interface MessageStreamHandler {

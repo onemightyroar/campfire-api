@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.http;
+package com.onemightyroar.campfireapi.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

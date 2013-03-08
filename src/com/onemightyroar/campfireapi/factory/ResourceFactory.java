@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.factory;
+package com.onemightyroar.campfireapi.factory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,14 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.onemightyroar.campfire.api.CampfireApi;
-import com.onemightyroar.campfire.api.models.Account;
-import com.onemightyroar.campfire.api.models.Message;
-import com.onemightyroar.campfire.api.models.MessageType;
-import com.onemightyroar.campfire.api.models.Room;
-import com.onemightyroar.campfire.api.models.Tweet;
-import com.onemightyroar.campfire.api.models.Upload;
-import com.onemightyroar.campfire.api.models.User;
+import com.onemightyroar.campfireapi.CampfireApi;
+import com.onemightyroar.campfireapi.models.Account;
+import com.onemightyroar.campfireapi.models.Message;
+import com.onemightyroar.campfireapi.models.MessageType;
+import com.onemightyroar.campfireapi.models.Room;
+import com.onemightyroar.campfireapi.models.Tweet;
+import com.onemightyroar.campfireapi.models.Upload;
+import com.onemightyroar.campfireapi.models.User;
 
 public class ResourceFactory {
 	

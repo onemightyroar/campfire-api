@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.models;
+package com.onemightyroar.campfireapi.models;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 
-import com.onemightyroar.campfire.api.utils.ToStringBuilder;
+import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
 
 public class Message implements Serializable {

@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.models;
+package com.onemightyroar.campfireapi.models;
 
 public enum MessageType {
 	TEXT("TextMessage"),

@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.utils;
+package com.onemightyroar.campfireapi.utils;
 
 /*
  * Copyright 2011 Björn Raupach

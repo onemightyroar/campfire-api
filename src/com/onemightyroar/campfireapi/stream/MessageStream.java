@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.stream;
+package com.onemightyroar.campfireapi.stream;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,11 +12,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.onemightyroar.campfire.api.CampfireApi;
-import com.onemightyroar.campfire.api.factory.ResourceFactory;
-import com.onemightyroar.campfire.api.models.Message;
-import com.onemightyroar.campfire.api.models.MessageType;
-import com.onemightyroar.campfire.api.models.Room;
+import com.onemightyroar.campfireapi.CampfireApi;
+import com.onemightyroar.campfireapi.factory.ResourceFactory;
+import com.onemightyroar.campfireapi.models.Message;
+import com.onemightyroar.campfireapi.models.MessageType;
+import com.onemightyroar.campfireapi.models.Room;
 
 
 public class MessageStream implements Runnable {

@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api;
+package com.onemightyroar.campfireapi;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,16 +11,16 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.onemightyroar.campfire.api.factory.ResourceFactory;
-import com.onemightyroar.campfire.api.http.HttpConnection;
-import com.onemightyroar.campfire.api.http.URLBuilder;
-import com.onemightyroar.campfire.api.models.Account;
-import com.onemightyroar.campfire.api.models.Message;
-import com.onemightyroar.campfire.api.models.Room;
-import com.onemightyroar.campfire.api.models.Upload;
-import com.onemightyroar.campfire.api.models.User;
-import com.onemightyroar.campfire.api.stream.MessageStream;
-import com.onemightyroar.campfire.api.stream.MessageStreamHandler;
+import com.onemightyroar.campfireapi.factory.ResourceFactory;
+import com.onemightyroar.campfireapi.http.HttpConnection;
+import com.onemightyroar.campfireapi.http.URLBuilder;
+import com.onemightyroar.campfireapi.models.Account;
+import com.onemightyroar.campfireapi.models.Message;
+import com.onemightyroar.campfireapi.models.Room;
+import com.onemightyroar.campfireapi.models.Upload;
+import com.onemightyroar.campfireapi.models.User;
+import com.onemightyroar.campfireapi.stream.MessageStream;
+import com.onemightyroar.campfireapi.stream.MessageStreamHandler;
 
 public class CampfireApi {
 
@@ -57,9 +57,9 @@ public class CampfireApi {
 	
 	/**
 	  * Constructor for use with getMe(). This method is deprecated.<br><br>
-	  * Instead you should use the {@link com.onemightyroar.campfire.api.CampfireApi#CampfireApi(String) Basic Constructor}
-	  * and {@link com.onemightyroar.campfire.api.CampfireApi#getMe(String, String) getMe}. You can use the response
-	  * with {@link com.onemightyroar.campfire.api.CampfireApi#setAuthToken(String) setAuthToken} to make additional calls.
+	  * Instead you should use the {@link com.onemightyroar.campfireapi.CampfireApi#CampfireApi(String) Basic Constructor}
+	  * and {@link com.onemightyroar.campfireapi.CampfireApi#getMe(String, String) getMe}. You can use the response
+	  * with {@link com.onemightyroar.campfireapi.CampfireApi#setAuthToken(String) setAuthToken} to make additional calls.
 	  * @param accountName (required) your Campfire account name.
 	  * @param username (required)
 	  * @param password (required) 
@@ -414,7 +414,7 @@ public class CampfireApi {
 	
 	/**
 	 * Gets the current user. If the AuthToken hasn't been set yet, you should use 
-	 * {@link com.onemightyroar.campfire.api.CampfireApi#getMe(String, String) getMe(String, String)}
+	 * {@link com.onemightyroar.campfireapi.CampfireApi#getMe(String, String) getMe(String, String)}
 	 * @return success
 	 */
 	public User getMe() {

@@ -1,4 +1,4 @@
-package com.onemightyroar.campfire.api.utils;
+package com.onemightyroar.campfireapi.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
