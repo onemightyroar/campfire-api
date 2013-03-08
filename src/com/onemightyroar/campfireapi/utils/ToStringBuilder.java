@@ -1,5 +1,3 @@
-package com.onemightyroar.campfireapi.utils;
-
 /*
  * Copyright 2011 Björn Raupach
 
@@ -16,52 +14,90 @@ package com.onemightyroar.campfireapi.utils;
    limitations under the License.
  */
 
+package com.onemightyroar.campfireapi.utils;
+
 /**
 * A stripped down version of Apache Commons ToStringBuilder.
 */
 public class ToStringBuilder {
 	
-    private StringBuilder buffer = new StringBuilder();
-    private boolean fieldsAppended;
+    /** The this.mBuffer. */
+    private StringBuilder mBuffer = new StringBuilder();
+    
+    /** The fields appended. */
+    private boolean mFieldsAppended;
 
-    public ToStringBuilder(Object target) {
+    /**
+     * Instantiates a new to string builder.
+     *
+     * @param target the target
+     */
+    public ToStringBuilder(final Object target) {
     	appendCanonicalName(target);
         appendHashCode(target);
     }
 
-    private void appendCanonicalName(Object obj) {
-    	buffer.append(obj.getClass().getCanonicalName());
+    /**
+     * Append canonical name.
+     *
+     * @param obj the obj
+     */
+    private void appendCanonicalName(final Object obj) {
+    	this.mBuffer.append(obj.getClass().getCanonicalName());
     }
     
-    private void appendHashCode(Object target) {
-        buffer.append('@');
-        buffer.append(Integer.toHexString(target.hashCode()));
+    /**
+     * Append hash code.
+     *
+     * @param target the target
+     */
+    private void appendHashCode(final Object target) {
+        this.mBuffer.append('@');
+        this.mBuffer.append(Integer.toHexString(target.hashCode()));
     }
 
+    /**
+     * @return The object as a string
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
-        if (fieldsAppended) {
-            buffer.append(']');
+        if (this.mFieldsAppended) {
+            this.mBuffer.append(']');
         }
-        return buffer.toString();
+        return this.mBuffer.toString();
     }
 
-    public ToStringBuilder append(String fieldName, Object value) {
+    /**
+     * Append.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @return the to string builder
+     */
+    public ToStringBuilder append(final String fieldName, final Object value) {
     	if (value == null) {
-    		return append(fieldName, "nil");
+    		return this.append(fieldName, "nil");
     	} else {
-    		return append(fieldName, value.toString());
+    		return this.append(fieldName, value.toString());
     	}
         
     }
 
-    public ToStringBuilder append(String fieldName, String value) {
-        if (!fieldsAppended) {
-            buffer.append('[');
-            fieldsAppended = true;
+    /**
+     * Append.
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @return the to string builder
+     */
+    public ToStringBuilder append(final String fieldName, final String value) {
+        if (!this.mFieldsAppended) {
+            this.mBuffer.append('[');
+            this.mFieldsAppended = true;
         } else {
-            buffer.append(' ');
+            this.mBuffer.append(' ');
         }
-        buffer.append(fieldName).append('=').append(value);
+        this.mBuffer.append(fieldName).append('=').append(value);
         return this;
     }
 }

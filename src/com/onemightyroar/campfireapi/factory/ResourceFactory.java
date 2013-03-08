@@ -19,282 +19,404 @@ import com.onemightyroar.campfireapi.models.Tweet;
 import com.onemightyroar.campfireapi.models.Upload;
 import com.onemightyroar.campfireapi.models.User;
 
+/**
+ * ResourceFactory
+ * 
+ * Factory class for building Campfire models from JSON.
+ *
+ * @author brianmuse
+ */
 public class ResourceFactory {
-	
+
+    /** The DATETIME format coming in from the API to translate to a {@link java.util.Date} */
+    private static final String API_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss Z";
+    
+    /** The api. */
 	private CampfireApi mApi;
 	
-	public ResourceFactory(CampfireApi api) {
-		mApi = api;
+	/**
+	 * Constructor method.
+	 *
+	 * @param api the api
+	 */
+	public ResourceFactory(final CampfireApi api) {
+		this.mApi = api;
 	}
 	
-	public Account buildAccount(String httpResult) {
+	/**
+	 * Builds the account.
+	 *
+	 * @param httpResult the http result
+	 * @return the account
+	 */
+	public Account buildAccount(final String httpResult) {
 		Account account = new Account();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONObject accountJSON = json.getJSONObject("account");
-			account.setId(accountJSON.getLong("id"));
-			account.setName(accountJSON.getString("name"));
-			account.setSubdomain(accountJSON.getString("subdomain"));
-			account.setPlan(accountJSON.getString("plan"));
-			account.setOwnerId(accountJSON.getLong("owner_id"));
-			account.setTimezone(accountJSON.getString("time_zone"));
-			account.setStorage(accountJSON.getInt("storage"));
-			account.setUpdatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(accountJSON.getString("updated_at")));
-			account.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(accountJSON.getString("created_at")));
+			JSONObject accountJSON = json.getJSONObject(JsonAccount.OBJECT_NAME);
+			account.setId(accountJSON.getLong(JsonAccount.ID));
+			account.setName(accountJSON.getString(JsonAccount.NAME));
+			account.setSubdomain(accountJSON.getString(JsonAccount.SUBDOMAIN));
+			account.setPlan(accountJSON.getString(JsonAccount.PLAN));
+			account.setOwnerId(accountJSON.getLong(JsonAccount.OWNER_ID));
+			account.setTimezone(accountJSON.getString(JsonAccount.TIME_ZONE));
+			account.setStorage(accountJSON.getInt(JsonAccount.STORAGE));
+			account.setUpdatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(accountJSON.getString(JsonAccount.UPDATED_AT)));
+			account.setCreatedAt(new SimpleDateFormat(API_TIME_FORMAT,
+			        Locale.US).parse(accountJSON.getString(JsonAccount.CREATED_AT)));
 			account.setJSON(accountJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		return account;
 	}
 	
-	public List<Room> buildRooms(String httpResult) {
+	/**
+	 * Builds the rooms.
+	 *
+	 * @param httpResult the http result
+	 * @return the list
+	 */
+	public List<Room> buildRooms(final String httpResult) {
 		List<Room> rooms = new ArrayList<Room>();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONArray roomsJSON = json.getJSONArray("rooms");
+			JSONArray roomsJSON = json.getJSONArray(JsonRoom.OBJECT_NAME_PLURAL);
 			
-			for(int i = 0; i < roomsJSON.length(); i++) {
+			for (int i = 0; i < roomsJSON.length(); i = i + 1) {
 				rooms.add(buildRoom(roomsJSON.getJSONObject(i)));
 			}
 			
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return rooms;
 	}
 	
-	public Room buildRoom(String httpResult) {
+	/**
+	 * Builds the room.
+	 *
+	 * @param httpResult the http result
+	 * @return the room
+	 */
+	public Room buildRoom(final String httpResult) {
 		Room room = new Room();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONObject roomJSON = json.getJSONObject("room");
+			JSONObject roomJSON = json.getJSONObject(JsonRoom.OBJECT_NAME);
 			
 			room = this.buildRoom(roomJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return room;
 	}
 	
-	public Room buildRoom(JSONObject roomJSON) {
+	/**
+	 * Builds the room.
+	 *
+	 * @param roomJSON the room json
+	 * @return the room
+	 */
+	public Room buildRoom(final JSONObject roomJSON) {
 		Room room = new Room();
 		
 		try {
-			room.setId(roomJSON.getLong("id"));
-			room.setName(roomJSON.getString("name"));
-			room.setMembershipLimit(roomJSON.getInt("membership_limit"));
-			room.setTopic(roomJSON.getString("topic"));
-			room.setOpenToGuests(roomJSON.has("open_to_guests") ? roomJSON.getBoolean("open_to_guests") : false);
-			room.setFull(roomJSON.has("full") ? roomJSON.getBoolean("full") : false);
-			room.setActiveTokenValue(roomJSON.has("active_token_value") ? roomJSON.getString("active_token_value") : "");
+			room.setId(roomJSON.getLong(JsonRoom.ID));
+			room.setName(roomJSON.getString(JsonRoom.NAME));
+			room.setMembershipLimit(roomJSON.getInt(JsonRoom.MEMBERSHIP_LIMIT));
+			room.setTopic(roomJSON.getString(JsonRoom.TOPIC));
+			room.setOpenToGuests(roomJSON.has(JsonRoom.OPEN_TO_GUESTS) 
+			        ? roomJSON.getBoolean(JsonRoom.OPEN_TO_GUESTS) : false);
+			room.setFull(roomJSON.has(JsonRoom.FULL) ? roomJSON.getBoolean(JsonRoom.FULL) : false);
+			room.setActiveTokenValue(roomJSON.has(JsonRoom.ACTIVE_TOKEN_VALUE) 
+			        ? roomJSON.getString(JsonRoom.ACTIVE_TOKEN_VALUE) : "");
 			room.setJSON(roomJSON);
 			
-			if(roomJSON.has("users")) {
-				JSONArray usersJSON = roomJSON.getJSONArray("users");
-				for(int i = 0; i < usersJSON.length(); i++) {
+			if (roomJSON.has(JsonUser.OBJECT_NAME_PLURAL)) {
+				JSONArray usersJSON = roomJSON.getJSONArray(JsonUser.OBJECT_NAME_PLURAL);
+				for (int i = 0; i < usersJSON.length(); i = i + 1) {
 					room.addActiveUser(buildUser(usersJSON.getJSONObject(i)));
 				}
 			}
 
-			room.setUpdatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(roomJSON.getString("updated_at")));
-			room.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(roomJSON.getString("created_at")));
+			room.setUpdatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(roomJSON.getString(JsonRoom.UPDATED_AT)));
+			room.setCreatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(roomJSON.getString(JsonRoom.CREATED_AT)));
 			
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		return room;
 	}
 	
-	public List<Message> buildMessages(String httpResult) {
-		return buildMessages(httpResult, null);
+	/**
+	 * Builds the messages.
+	 *
+	 * @param httpResult the http result
+	 * @return the list
+	 */
+	public List<Message> buildMessages(final String httpResult) {
+		return this.buildMessages(httpResult, null);
 	}
 	
-	public List<Message> buildMessages(String httpResult, Room room) {
+	/**
+	 * Builds the messages.
+	 *
+	 * @param httpResult the http result
+	 * @param room the room
+	 * @return the list
+	 */
+	public List<Message> buildMessages(final String httpResult, final Room room) {
 		List<Message> messages = new ArrayList<Message>();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONArray messagesJSON = json.getJSONArray("messages");
+			JSONArray messagesJSON = json.getJSONArray(JsonMessage.OBJECT_NAME_PLURAL);
 			
-			for(int i = 0; i < messagesJSON.length(); i++) {
+			for (int i = 0; i < messagesJSON.length(); i = i + 1) {
 				messages.add(buildMessage(messagesJSON.getJSONObject(i), room));
 			}
 			
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return messages;
 	}
 	
-	public Message buildMessage(String httpResult) {
-		return buildMessage(httpResult, null);
+	/**
+	 * Builds the message.
+	 *
+	 * @param httpResult the http result
+	 * @return the message
+	 */
+	public Message buildMessage(final String httpResult) {
+		return this.buildMessage(httpResult, null);
 	}
 	
-	public Message buildMessage(String httpResult, Room room) {
+	/**
+	 * Builds the message.
+	 *
+	 * @param httpResult the http result
+	 * @param room the room
+	 * @return the message
+	 */
+	public Message buildMessage(final String httpResult, final Room room) {
 		Message message = new Message();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONObject messageJSON = json.getJSONObject("message");
+			JSONObject messageJSON = json.getJSONObject(JsonMessage.OBJECT_NAME);
 			
 			message = this.buildMessage(messageJSON, room);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return message;
 	}
 	
-	public Message buildMessage(JSONObject messageJSON) {
-		return buildMessage(messageJSON, null);
+	/**
+	 * Builds the message.
+	 *
+	 * @param messageJSON the message json
+	 * @return the message
+	 */
+	public Message buildMessage(final JSONObject messageJSON) {
+		return this.buildMessage(messageJSON, null);
 	}
 	
-	public Message buildMessage(JSONObject messageJSON, Room room) {
+	/**
+	 * Builds the message.
+	 *
+	 * @param messageJSON the message json
+	 * @param room the room
+	 * @return the message
+	 */
+	public Message buildMessage(final JSONObject messageJSON, final Room room) {
 		Message message = new Message();
 		try {
-			message.setId(messageJSON.getLong("id"));
-			message.setRoomId(messageJSON.getLong("room_id"));
-			message.setUserId(!messageJSON.isNull("user_id") ? messageJSON.getLong("user_id") : 0L);
-			message.setBody(messageJSON.getString("body"));
-			message.setStarred(messageJSON.getBoolean("starred"));
-			message.setType(messageJSON.getString("type"));
-			message.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(messageJSON.getString("created_at")));
+			message.setId(messageJSON.getLong(JsonMessage.ID));
+			message.setRoomId(messageJSON.getLong(JsonMessage.ROOM_ID));
+			message.setUserId(!messageJSON.isNull(JsonMessage.USER_ID) ? messageJSON.getLong(JsonMessage.USER_ID) : 0L);
+			message.setBody(messageJSON.getString(JsonMessage.BODY));
+			message.setStarred(messageJSON.getBoolean(JsonMessage.STARRED));
+			message.setType(messageJSON.getString(JsonMessage.TYPE));
+			message.setCreatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(messageJSON.getString(JsonMessage.CREATED_AT)));
 			message.setJSON(messageJSON);
 		
-			if(message.getType() == MessageType.UPLOAD) {
-				message.setUpload(mApi.getMessageUpload(message.getRoomId(), message.getId()));
+			if (message.getType() == MessageType.UPLOAD) {
+				message.setUpload(this.mApi.getMessageUpload(message.getRoomId(), message.getId()));
 				Upload upload = message.getUpload();
 				message.setBody(upload == null ? "deleted" : upload.getFullUrl());
 			}
 			
-			if(message.getType() == MessageType.TWEET) {
-				Object tweetObject = messageJSON.get("tweet");
+			if (message.getType() == MessageType.TWEET) {
+				Object tweetObject = messageJSON.get(JsonTweet.OBJECT_NAME);
 
 				// Campfire bug: Sometimes tweets are NULL
-				if(tweetObject == JSONObject.NULL)
-				{
-					message.setType("TextMessage");
-				} 
-				// Everything went fine.
-				else {
-					message.setTweet(buildTweet(messageJSON.getJSONObject("tweet")));
+				if (tweetObject == JSONObject.NULL) {
+					message.setType(MessageType.TEXT.toString());
+				} else {
+					message.setTweet(buildTweet(messageJSON.getJSONObject(JsonTweet.OBJECT_NAME)));
 				}
 			}
 			
-			if(room != null && message.getUserId() != 0) {
+			if (room != null && message.getUserId() != 0) {
 				
 				User user = room.findUserById(message.getUserId());
 				
-				if(user == null) {
-					message.setUser(mApi.getUser(message.getUserId()));
+				if (user == null) {
+					message.setUser(this.mApi.getUser(message.getUserId()));
 					room.addInactiveUser(message.getUser());
-				}else{
+				} else {
 					message.setUser(user);
 				}
 				
 			}
 			
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		return message;
 	}
 	
-	public List<Upload> buildUploads(String httpResult) {
+	/**
+	 * Builds the uploads.
+	 *
+	 * @param httpResult the http result
+	 * @return the list
+	 */
+	public List<Upload> buildUploads(final String httpResult) {
 		List<Upload> uploads = new ArrayList<Upload>();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONArray uploadsJSON = json.getJSONArray("uploads");
+			JSONArray uploadsJSON = json.getJSONArray(JsonUpload.OBJECT_NAME_PLURAL);
 			
-			for(int i = 0; i < uploadsJSON.length(); i++) {
+			for (int i = 0; i < uploadsJSON.length(); i = i + 1) {
 				uploads.add(buildUpload(uploadsJSON.getJSONObject(i)));
 			}
 			
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return uploads;
 	}
 	
-	public Upload buildUpload(String httpResult) {
+	/**
+	 * Builds the upload.
+	 *
+	 * @param httpResult the http result
+	 * @return the upload
+	 */
+	public Upload buildUpload(final String httpResult) {
 		Upload upload = new Upload();
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONObject uploadJSON = json.getJSONObject("upload");
+			JSONObject uploadJSON = json.getJSONObject(JsonUpload.OBJECT_NAME);
 			
 			upload = this.buildUpload(uploadJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return upload;
 	}
 	
-	public Upload buildUpload(JSONObject uploadJSON) {
+	/**
+	 * Builds the upload.
+	 *
+	 * @param uploadJSON the upload json
+	 * @return the upload
+	 */
+	public Upload buildUpload(final JSONObject uploadJSON) {
 		Upload upload = new Upload();
 		try {
-			upload.setId(uploadJSON.getLong("id"));
-			upload.setRoomId(uploadJSON.getLong("room_id"));
-			upload.setUserId(uploadJSON.getLong("user_id"));
-			upload.setName(uploadJSON.getString("name"));
-			upload.setByteSize(uploadJSON.getInt("byte_size"));
-			upload.setContentType(uploadJSON.getString("content_type"));
-			upload.setFullUrl(uploadJSON.getString("full_url"));
-			upload.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(uploadJSON.getString("created_at")));
+			upload.setId(uploadJSON.getLong(JsonUpload.ID));
+			upload.setRoomId(uploadJSON.getLong(JsonUpload.ROOM_ID));
+			upload.setUserId(uploadJSON.getLong(JsonUpload.USER_ID));
+			upload.setName(uploadJSON.getString(JsonUpload.NAME));
+			upload.setByteSize(uploadJSON.getInt(JsonUpload.BYTE_SIZE));
+			upload.setContentType(uploadJSON.getString(JsonUpload.CONTENT_TYPE));
+			upload.setFullUrl(uploadJSON.getString(JsonUpload.FULL_URL));
+			upload.setCreatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(uploadJSON.getString(JsonUpload.CREATED_AT)));
 			upload.setJSON(uploadJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		return upload;
 	}
 	
-	public User buildUser(String httpResult) {
+	/**
+	 * Builds the user.
+	 *
+	 * @param httpResult the http result
+	 * @return the user
+	 */
+	public User buildUser(final String httpResult) {
 		User user = null;
 		try {
 			JSONObject json = new JSONObject(httpResult);
-			JSONObject userJSON = json.getJSONObject("user");
+			JSONObject userJSON = json.getJSONObject(JsonUser.OBJECT_NAME);
 			
 			user = this.buildUser(userJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return user;
 	}
 
-	public User buildUser(JSONObject userJSON) {
+	/**
+	 * Builds the user.
+	 *
+	 * @param userJSON the user json
+	 * @return the user
+	 */
+	public User buildUser(final JSONObject userJSON) {
 		User user = new User();
 		try {
-			user.setId(userJSON.getLong("id"));
-			user.setName(userJSON.getString("name"));
-			user.setEmail(userJSON.getString("email_address"));
-			user.setAdmin(userJSON.getBoolean("admin"));
-			user.setType(userJSON.getString("type"));
-			user.setAvatarUrl(userJSON.getString("avatar_url"));
-			user.setApiAuthToken(userJSON.has("api_auth_token") ? userJSON.getString("api_auth_token") : "");
-			user.setCreatedAt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US).parse(userJSON.getString("created_at")));
+			user.setId(userJSON.getLong(JsonUser.ID));
+			user.setName(userJSON.getString(JsonUser.NAME));
+			user.setEmail(userJSON.getString(JsonUser.EMAIL_ADDRESS));
+			user.setAdmin(userJSON.getBoolean(JsonUser.IS_ADMIN));
+			user.setType(userJSON.getString(JsonUser.TYPE));
+			user.setAvatarUrl(userJSON.getString(JsonUser.AVATAR_URL));
+			user.setApiAuthToken(userJSON.has(JsonUser.API_AUTH_TOKEN) 
+			        ? userJSON.getString(JsonUser.API_AUTH_TOKEN) : "");
+			user.setCreatedAt(new SimpleDateFormat(API_TIME_FORMAT, 
+			        Locale.US).parse(userJSON.getString(JsonUser.CREATED_AT)));
 			user.setJSON(userJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
 		}
 		return user;
 	}
 
-	public Tweet buildTweet(JSONObject tweetJSON) {
+	/**
+	 * Builds the tweet.
+	 *
+	 * @param tweetJSON the tweet json
+	 * @return the tweet
+	 */
+	public Tweet buildTweet(final JSONObject tweetJSON) {
 		Tweet tweet = new Tweet();
 		try {
-			tweet.setId(tweetJSON.getLong("id"));
-			tweet.setBody(tweetJSON.getString("message"));
-			tweet.setUsername(tweetJSON.getString("author_username"));
-			tweet.setProfileImageUrl(tweetJSON.getString("author_avatar_url"));
+			tweet.setId(tweetJSON.getLong(JsonTweet.ID));
+			tweet.setBody(tweetJSON.getString(JsonTweet.MESSAGE));
+			tweet.setUsername(tweetJSON.getString(JsonTweet.AUTHOR_USERNAME));
+			tweet.setProfileImageUrl(tweetJSON.getString(JsonTweet.AUTHOR_AVATAR_URL));
 			tweet.setJSON(tweetJSON);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return tweet;

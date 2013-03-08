@@ -1,33 +1,36 @@
-/**
- * Campfire Api - A Java library for Campfire from 37Signals
- *
- * @author		brianmuse
- * @copyright	2013 One Mighty Roar
- * @link		https://github.com/onemightyroar/campfire-api
- * @license		https://github.com/onemightyroar/campfire-api/blob/master/LICENSE.md
- * @version		1.0.0
- */
-	
 package com.onemightyroar.campfireapi;
 
 /**
- * ApiException
- * 
+ * ApiException.
+ *
  * @author brianmuse
  */
 public class ApiException extends RuntimeException {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
-	private final int responseCode;
+	/** The response code. */
+	private final int mResponseCode;
 	
-	public ApiException(int responseCode, String message) {
-		super(responseCode + (message.equals("") ? "" : " - " + message));
-		this.responseCode = responseCode;
+	/**
+	 * Instantiates a new api exception.
+	 *
+	 * @param responseCode the response code
+	 * @param message the message
+	 */
+	public ApiException(final int responseCode, final String message) {
+		super(responseCode + ("".equals(message) ? "" : " - " + message));
+		this.mResponseCode = responseCode;
 	}
 	
+	/**
+	 * Gets the response code.
+	 *
+	 * @return the response code
+	 */
 	public int getResponseCode() {
-		return responseCode;
+		return this.mResponseCode;
 	}
 	
 }

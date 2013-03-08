@@ -1,13 +1,3 @@
-package com.onemightyroar.campfireapi.http;
-
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-
-
 /*
  * Copyright 2011 Björn Raupach
 
@@ -23,82 +13,155 @@ import java.util.List;
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
+package com.onemightyroar.campfireapi.http;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * The Class URLBuilder.
+ */
 public class URLBuilder {
 	
-	private final String host;
-	private final String path;
-	private final List<FieldValuePair> fieldValuePairs;
+	/** The this.mHost. */
+	private final String mHost;
 	
-	public URLBuilder(String host, String path) {
-		this.host = host;
-		this.path = path;
-		this.fieldValuePairs = new LinkedList<URLBuilder.FieldValuePair>();
+	/** The path. */
+	private final String mPath;
+	
+	/** The field value pairs. */
+	private final List<FieldValuePair> mFieldValuePairs;
+	
+	/**
+	 * Instantiates a new uRL builder.
+	 *
+	 * @param host The host
+	 * @param path the path
+	 */
+	public URLBuilder(final String host, final String path) {
+		this.mHost = host;
+		this.mPath = path;
+		this.mFieldValuePairs = new LinkedList<URLBuilder.FieldValuePair>();
 	}
 	
-	public URLBuilder addFieldValuePair(String field, Object value) {
+	/**
+	 * Adds the field value pair.
+	 *
+	 * @param field the field
+	 * @param value the value
+	 * @return the uRL builder
+	 */
+	public URLBuilder addFieldValuePair(final String field, final Object value) {
 		if (value != null) {
-			return addFieldValuePair(new FieldValuePair(field, value));
+			return this.addFieldValuePair(new FieldValuePair(field, value));
 		} else {
 			return this;
 		}
 	}
 	
-	private URLBuilder addFieldValuePair(FieldValuePair fieldValuePair) {
-		fieldValuePairs.add(fieldValuePair);
+	/**
+	 * Adds the field value pair.
+	 *
+	 * @param fieldValuePair the field value pair
+	 * @return the uRL builder
+	 */
+	private URLBuilder addFieldValuePair(final FieldValuePair fieldValuePair) {
+		this.mFieldValuePairs.add(fieldValuePair);
 		return this;
 	}
 	
+	/**
+	 * To uri.
+	 *
+	 * @return the uri
+	 */
 	public URI toURI() {
 		String query = null;
-		if (!fieldValuePairs.isEmpty()) {
+		if (!this.mFieldValuePairs.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
-			for (FieldValuePair pair : fieldValuePairs) {
+			for (FieldValuePair pair : this.mFieldValuePairs) {
 				sb.append(pair.getField())
 					.append("=")
 					.append(pair.getValue())
 					.append("&");
 			}
-			sb.deleteCharAt(sb.length()-1); // chop last ampersand
+			sb.deleteCharAt(sb.length() - 1);
 			query = sb.toString();
 		}
 		
 		URI uri = null;
 		try {
-			uri = new URI("https", null, host, -1, path, query, null);
-		} catch (URISyntaxException e) {
+			uri = new URI("https", null, this.mHost, -1, this.mPath, query, null);
+		} catch (final URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 		return uri;
 	}
 	
+	/**
+	 * To url.
+	 *
+	 * @return the url
+	 */
 	public URL toURL() {
 		try {
-			return toURI().toURL();
-		} catch (MalformedURLException e) {
+			return this.toURI().toURL();
+		} catch (final MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+	/**
+	 * The Class FieldValuePair.
+	 */
 	public class FieldValuePair {
 		
-		final String field;
-		final Object value;
+		/** The field. */
+		final String mField;
 		
-		public FieldValuePair(String field, Object value) {
-			this.field = field;
-			this.value = value;
+		/** The value. */
+		final Object mValue;
+		
+		/**
+		 * Instantiates a new field value pair.
+		 *
+		 * @param field the field
+		 * @param value the value
+		 */
+		public FieldValuePair(final String field, final Object value) {
+			this.mField = field;
+			this.mValue = value;
 		}
 		
+		/**
+		 * Gets the field.
+		 *
+		 * @return the field
+		 */
 		public String getField() {
-			return field;
+			return this.mField;
 		}
 		
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public Object getValue() {
-			return value;
+			return this.mValue;
 		}
 		
+		/**
+		 * @return The object as a string
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString() {
-			return field + "=" + value;
+			return this.mField + "=" + this.mValue;
 		}
 		
 	}

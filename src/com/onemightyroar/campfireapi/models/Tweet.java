@@ -1,65 +1,144 @@
+/**
+ * Campfire Api - A Java library for Campfire from 37Signals
+ *
+ * @author		brianmuse
+ * @copyright	2013 One Mighty Roar
+ * @link		https://github.com/onemightyroar/campfire-api
+ * @license		https://github.com/onemightyroar/campfire-api/blob/master/LICENSE.md
+ * @version		1.0.0
+ */
+
 package com.onemightyroar.campfireapi.models;
 
 import org.json.JSONObject;
 
 import com.onemightyroar.campfireapi.utils.ToStringBuilder;
 
-
+/**
+ * Tweet
+ * 
+ * A tweet object attached to a {@link com.onemightyroar.campfireapi.models.MessageType TweetMessage}
+ * 
+ * @author brianmuse
+ */
 public class Tweet {
 	
-	private Long id;
-	private String body;
-	private String username;
-	private String profileImageUrl;
-	private JSONObject json;
+	/** The id. */
+	private Long mId;
 	
+	/** The body. */
+	private String mBody;
+	
+	/** The username. */
+	private String mUsername;
+	
+	/** The profile image url. */
+	private String mProfileImageUrl;
+	
+	/** The json. */
+	private JSONObject mJson;
+	
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	public Long getId() {
-		return id;
+		return this.mId;
 	}
 	
-	public void setId(Long id) {
-		this.id = id;
+	/**
+	 * Sets the id.
+	 *
+	 * @param id the new id
+	 */
+	public void setId(final Long id) {
+		this.mId = id;
 	}
 	
+	/**
+	 * Gets the body.
+	 *
+	 * @return the body
+	 */
 	public String getBody() {
-		return body;
+		return this.mBody;
 	}
 	
-	public void setBody(String body) {
-		this.body = body;
+	/**
+	 * Sets the body.
+	 *
+	 * @param body the new body
+	 */
+	public void setBody(final String body) {
+		this.mBody = body;
 	}
 	
+	/**
+	 * Gets the username.
+	 *
+	 * @return the username
+	 */
 	public String getUsername() {
-		return username;
+		return this.mUsername;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	/**
+	 * Sets the username.
+	 *
+	 * @param username the new username
+	 */
+	public void setUsername(final String username) {
+		this.mUsername = username;
 	}
 	
+	/**
+	 * Gets the profile image url.
+	 *
+	 * @return the profile image url
+	 */
 	public String getProfileImageUrl() {
-		return profileImageUrl;
+		return this.mProfileImageUrl;
 	}
 	
-	public void setProfileImageUrl(String profileImageUrl) {
-		this.profileImageUrl = profileImageUrl;
+	/**
+	 * Sets the profile image url.
+	 *
+	 * @param profileImageUrl the new profile image url
+	 */
+	public void setProfileImageUrl(final String profileImageUrl) {
+		this.mProfileImageUrl = profileImageUrl;
 	}
 	
-	public void setJSON(JSONObject json){
-		this.json = json;
+	/**
+	 * Sets the json.
+	 *
+	 * @param json the new json
+	 */
+	public void setJSON(final JSONObject json) {
+		this.mJson = json;
 	}
 	
-	public JSONObject getJSON(){
-		return json;
+	/**
+	 * Gets the json.
+	 *
+	 * @return the json
+	 */
+	public JSONObject getJSON() {
+		return this.mJson;
 	}
 	
+	/**
+	 * @return The object in string form
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
-			.append("id",getId())
-			.append("body",getBody())
-			.append("username",getUsername())
-			.append("profileImageUrl",getProfileImageUrl())
+			.append("id", this.getId())
+			.append("body", this.getBody())
+			.append("username", this.getUsername())
+			.append("profileImageUrl", this.getProfileImageUrl())
 			.toString();
 	}
 	

@@ -5,34 +5,46 @@ import com.onemightyroar.campfireapi.models.Room;
 import com.onemightyroar.campfireapi.models.User;
 
 
+/**
+ * The Interface MessageStreamHandler.
+ */
 public interface MessageStreamHandler {
 
     /**
-     * What to do when we get a new message from the stream
-     * @param t Incoming message
+     * What to do when we get a new message from the stream.
+     *
+     * @param m the m
      */
-    public void addMessage(Message m);
+    void addMessage(Message m);
 
 
     /**
      * Campfire stream handler has been requested to stop.
      */
-    public void stop();
+    void stop();
     
     /**
-     * User has entered the room
+     * User has entered the room.
+     *
+     * @param user the user
+     * @param room the room
      */
-    public void enter(User user, Room room);
+    void enter(User user, Room room);
     
     /**
-     * User has left the room
+     * User has left the room.
+     *
+     * @param user the user
+     * @param room the room
      */
-    public void leave(User user, Room room);
+    void leave(User user, Room room);
 
     /**
-     * Connection Lost
+     * Connection Lost.
+     *
+     * @param room the room
      */
-    public void disconnect(Room room);
+    void disconnect(Room room);
     
     
 }
